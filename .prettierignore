@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+dist
+public
+ios
+android
+
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+*.log
+.DS_Store
+.env*

@@ -1,0 +1,25 @@
+# deps
+node_modules
+
+# next
+.next
+out
+
+# typescript
+*.tsbuildinfo
+
+# capacitor native
+ios
+android
+
+# env
+.env*.local
+
+# system
+.DS_Store
+*.log
+.idea
+.vscode
+
+# claude code personal settings (commit settings.json, rules, CLAUDE.md)
+.claude/settings.local.json
