@@ -91,7 +91,7 @@ git push -u origin <new-branch>
 PR 생성 (HEREDOC):
 
 ```bash
-gh pr create --title "<commit 첫 줄>" --body "$(cat <<'EOF'
+gh pr create --title "<PR title — 영어, 명백한 스코프>" --body "$(cat <<'EOF'
 ## Summary
 - <bullet 1>
 - <bullet 2>
@@ -108,8 +108,19 @@ EOF
 )"
 ```
 
-- title 은 commit 첫 줄과 동일.
-- body Summary 는 diff 요약, Test plan 은 영향 표면(홈/캘린더/인사이트 등) 명시.
+### PR title 규칙
+
+- **항상 영어**. 커밋 첫 줄이 한국어여도 PR title 은 영어로 다시 작성.
+- **명백/구체적**: 나중에 PR 목록만 봐도 무슨 작업인지 기억나도록 핵심 스코프(영향 받은 화면/모듈/STEP 번호 등)를 포함.
+- 형식: `<type>(<scope>): <what changed>` — 예: `feat(home): overlay upload + crop dialog`, `chore(eslint): migrate to flat config`.
+- 너무 길지 않게 — 90자 이내 권장.
+
+### PR body 규칙
+
+- **너무 길지 않게**. Summary 는 3-6 bullet 으로 핵심만. 세부 파일 나열 금지.
+- 커밋이 여러 영역(앱 코드 + Claude 환경 + 문서 + 툴체인 등)을 묶었다면 **영역별로 짧은 소제목** 사용 가능 (예: `### App`, `### Claude 작업 환경`, `### 문서`, `### 툴체인`).
+- `.claude/`, `docs/` 등 Claude/메타 작업이 포함된 경우 **반드시 별도 항목으로 언급** — 코드 변경만 적으면 무엇이 들어갔는지 PR 보고 기억 못 함.
+- Test plan 은 영향 표면(홈/캘린더/인사이트/로그/설정/인증 등) 기준으로 체크리스트.
 
 ## STEP 7 — 결과 보고
 
