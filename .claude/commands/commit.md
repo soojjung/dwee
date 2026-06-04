@@ -198,10 +198,16 @@ EOF
 
 ### PR body 규칙
 
+- **항상 영어로 작성**. 커밋 메시지가 한국어여도 PR body 는 영어로 다시 표현.
 - **너무 길지 않게**. Summary 는 3-6 bullet 으로 핵심만. 세부 파일 나열 금지.
-- 커밋이 여러 영역(앱 코드 + Claude 환경 + 문서 + 툴체인 등)을 묶었다면 **영역별로 짧은 소제목** 사용 가능 (예: `### App`, `### Claude 작업 환경`, `### 툴체인`).
-- `## Docs` 섹션은 위 추출 명령 결과로 **자동 생성** — Summary 에 문서 변경을 중복 나열하지 않음.
-- Test plan 은 영향 표면(홈/캘린더/인사이트/로그/설정/인증 등) 기준으로 체크리스트.
+- 커밋이 여러 영역(앱 코드 + Claude 환경 + 문서 + 툴체인 등)을 묶었다면 **영역별로 짧은 소제목** 사용 가능 (예: `### App`, `### Claude harness`, `### Toolchain`).
+- `## Docs` 섹션은 위 추출 명령 결과로 **자동 생성** — Summary 에 문서 변경을 중복 나열하지 않음. 경로는 `[path](path)` clickable markdown link.
+- **이미지 임베드는 raw URL 절대경로 사용** — GitHub PR body 안에서는 markdown 의 relative path (`![](tests/snapshots/x.png)`) 가 자동으로 raw URL 로 변환되지 않아 broken icon 으로 보임. 다음 형식 권장:
+  ```html
+  <img src="https://raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>" width="240" />
+  ```
+  브랜치명/경로는 PR 의 head branch 기준. 머지 후엔 branch 가 삭제돼 broken 이 되지만 PR 리뷰 시점엔 정상.
+- **Test plan = 이 PR 에서 이미 검증된 항목의 로그** — 사용자에게 떠넘기는 체크리스트가 아님. 과거형/완료형 (`Ran ...`, `Verified ...`, `Manually tested ...`). 체크박스 `[ ]` 금지, 일반 bullet `-` 만 사용. 검증 못한 항목은 빼거나 `**Not yet verified:** <item>` 줄로 표기.
 
 ## STEP 8 — 결과 보고
 
