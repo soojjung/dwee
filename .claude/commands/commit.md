@@ -193,10 +193,10 @@ gh pr create --title "<PR title — English, explicit scope>" --body "$(cat <<'E
 - <doc-change bullet — from extraction above. Omit this section entirely if empty>
 
 ## Test plan
-- <past-tense item describing what was already verified in this PR — e.g. "Ran `pnpm typecheck` and `pnpm lint` — both pass">
-- <e.g. "Verified Home FAB layout in browser at 375px and 1024px widths">
-- <e.g. "Manually tested period add via FAB modal — toast appears, data persists after reload">
-- (if anything could not be verified) **Not yet verified:** <item>
+- [x] <past-tense item already verified in this PR — e.g. "Ran `pnpm typecheck` and `pnpm lint` — both pass">
+- [x] <e.g. "Verified Home FAB layout in browser at 375px and 1024px widths">
+- [x] <e.g. "Manually tested period add via FAB modal — toast appears, data persists after reload">
+- [ ] (only if something genuinely could not be verified) **Not yet verified:** <item>
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 EOF
@@ -221,7 +221,7 @@ EOF
   <img src="https://raw.githubusercontent.com/<owner>/<repo>/<commit-sha>/<path>" width="240" />
   ```
   STEP 7 푸시 직후 `git rev-parse HEAD` 의 short SHA (7자 이상) 를 캡처해 모든 이미지 URL 에 박음. PR 에 추가 커밋이 푸시돼도 기존 URL 은 그대로 유효 (해당 SHA 가 트리에 영구 보존). 머지 후에도 동일하게 작동.
-- **Test plan = 이 PR 에서 이미 검증된 항목의 로그** — 사용자에게 떠넘기는 체크리스트가 아님. 과거형/완료형 (`Ran ...`, `Verified ...`, `Manually tested ...`). 체크박스 `[ ]` 금지, 일반 bullet `-` 만 사용. 검증 못한 항목은 빼거나 `**Not yet verified:** <item>` 줄로 표기.
+- **Test plan = 이 PR 에서 이미 검증된 항목의 로그** — 사용자에게 떠넘기는 체크리스트가 아님. 과거형/완료형 (`Ran ...`, `Verified ...`, `Manually tested ...`). **이미 검증된 항목은 `- [x]` 체크된 체크박스** 로 ("done" 시각 표현). 검증하지 못한 항목만 `- [ ] **Not yet verified:** <item>` 로 빈 체크박스 사용 — 이 경우 PR 본문 안에서 한눈에 미검증 항목이 드러남.
 
 ## STEP 8 — 결과 보고
 
