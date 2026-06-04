@@ -4,7 +4,7 @@ import { indexedDBPeriodAdapter } from './adapters/indexeddb/IndexedDBPeriodAdap
 import { indexedDBConditionAdapter } from './adapters/indexeddb/IndexedDBConditionAdapter';
 import { indexedDBMediaAdapter } from './adapters/indexeddb/IndexedDBMediaAdapter';
 import { runMigrations } from './adapters/indexeddb/migrations';
-import { STORAGE_KEYS } from './adapters/indexeddb/keys';
+import { STORAGE_KEYS, DEPRECATED_KEYS } from './adapters/indexeddb/keys';
 import type { SettingsRepository } from './repositories/SettingsRepository';
 import type { PeriodRepository } from './repositories/PeriodRepository';
 import type { ConditionRepository } from './repositories/ConditionRepository';
@@ -32,6 +32,6 @@ export async function resetAllUserData(): Promise<void> {
     del(STORAGE_KEYS.periods),
     del(STORAGE_KEYS.conditions),
     del(STORAGE_KEYS.mediaHomeHero),
-    del(STORAGE_KEYS.mediaHomeOverlays),
+    del(DEPRECATED_KEYS.mediaHomeOverlays),
   ]);
 }

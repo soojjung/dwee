@@ -1,6 +1,6 @@
-import { ko } from './locales/ko';
 import { en } from './locales/en';
-import type { Dictionary } from './locales/ko';
+import { ko } from './locales/ko';
+import type { Dictionary } from './locales/en';
 
-export const dictionaries = { ko, en };
+export const dictionaries = { en, ko };
 export type { Dictionary };
