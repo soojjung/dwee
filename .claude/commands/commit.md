@@ -153,17 +153,24 @@ EOF
 git push -u origin <new-branch>
 ```
 
+**푸시 직후 SHA 캡처** (Docs 링크·이미지 URL 모두 이 SHA 기반으로 박음):
+
+```bash
+SHA=$(git rev-parse --short HEAD)
+OWNER_REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+```
+
 **PR body 구성 전 문서 변경 추출** (PR body 에 포함시킬 데이터):
 
 ```bash
 git diff --name-status origin/main...HEAD -- 'docs/**' '*.md' '.claude/rules/**' '.claude/agents/**' '.claude/commands/**' 'README*' 'CLAUDE.md'
 ```
 
-- 출력이 있으면 status code 별로 그룹핑해 PR body 의 `## Docs` 섹션 bullet 으로 변환. **경로는 항상 clickable markdown link 형식** `[path](path)` 로:
-  - `A` → `➕ [<path>](<path>) (added)`
-  - `M` → `✏️ [<path>](<path>) (modified)`
-  - `D` → `🗑 [<path>](<path>) (removed)`
-  - `R<score>` → `↪ [<old-path>](<old-path>) → [<new-path>](<new-path>) (renamed)`
+- 출력이 있으면 status code 별로 그룹핑해 PR body 의 `## Docs` 섹션 bullet 으로 변환. **경로는 SHA 기반 절대 URL** (`https://github.com/<owner>/<repo>/blob/<sha>/<path>`) 로 — relative path 는 새로 추가된 파일이 base branch 에 아직 없을 때 404 가 나고, branch name 은 머지 후 broken. SHA 는 영구.
+  - `A` → `➕ [<path>](https://github.com/<owner>/<repo>/blob/<sha>/<path>) (added)`
+  - `M` → `✏️ [<path>](https://github.com/<owner>/<repo>/blob/<sha>/<path>) (modified)`
+  - `D` → `🗑 <path> (removed)` — 삭제된 파일은 현재 트리에 없어 링크 불가, 텍스트만.
+  - `R<score>` → `↪ [<old-path>](https://github.com/<owner>/<repo>/blob/<sha>~1/<old-path>) → [<new-path>](https://github.com/<owner>/<repo>/blob/<sha>/<new-path>) (renamed)` — old 는 직전 부모 커밋(`<sha>~1`).
 - 출력이 비어있으면 `## Docs` 섹션 자체를 **생략** (빈 헤딩 만들지 않음).
 
 PR 생성 (HEREDOC):
@@ -202,11 +209,11 @@ EOF
 - **너무 길지 않게**. Summary 는 3-6 bullet 으로 핵심만. 세부 파일 나열 금지.
 - 커밋이 여러 영역(앱 코드 + Claude 환경 + 문서 + 툴체인 등)을 묶었다면 **영역별로 짧은 소제목** 사용 가능 (예: `### App`, `### Claude harness`, `### Toolchain`).
 - `## Docs` 섹션은 위 추출 명령 결과로 **자동 생성** — Summary 에 문서 변경을 중복 나열하지 않음. 경로는 `[path](path)` clickable markdown link.
-- **이미지 임베드는 raw URL 절대경로 사용** — GitHub PR body 안에서는 markdown 의 relative path (`![](tests/snapshots/x.png)`) 가 자동으로 raw URL 로 변환되지 않아 broken icon 으로 보임. 다음 형식 권장:
+- **이미지 임베드는 commit SHA 기반 raw URL** — GitHub PR body 안에서 markdown 의 relative path (`![](tests/snapshots/x.png)`) 는 자동 변환되지 않아 broken icon 으로 보이고, branch name 기반 URL 은 PR 머지 후 branch 삭제와 함께 broken 이 됨. **SHA 는 영구**. 형식:
   ```html
-  <img src="https://raw.githubusercontent.com/<owner>/<repo>/<branch>/<path>" width="240" />
+  <img src="https://raw.githubusercontent.com/<owner>/<repo>/<commit-sha>/<path>" width="240" />
   ```
-  브랜치명/경로는 PR 의 head branch 기준. 머지 후엔 branch 가 삭제돼 broken 이 되지만 PR 리뷰 시점엔 정상.
+  STEP 7 푸시 직후 `git rev-parse HEAD` 의 short SHA (7자 이상) 를 캡처해 모든 이미지 URL 에 박음. PR 에 추가 커밋이 푸시돼도 기존 URL 은 그대로 유효 (해당 SHA 가 트리에 영구 보존). 머지 후에도 동일하게 작동.
 - **Test plan = 이 PR 에서 이미 검증된 항목의 로그** — 사용자에게 떠넘기는 체크리스트가 아님. 과거형/완료형 (`Ran ...`, `Verified ...`, `Manually tested ...`). 체크박스 `[ ]` 금지, 일반 bullet `-` 만 사용. 검증 못한 항목은 빼거나 `**Not yet verified:** <item>` 줄로 표기.
 
 ## STEP 8 — 결과 보고
