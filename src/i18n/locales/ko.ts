@@ -1,4 +1,6 @@
-export const ko = {
+import type { Dictionary } from './en';
+
+export const ko: Dictionary = {
   app: {
     name: 'dwee',
     tagline: '내 몸의 리듬을 부드럽게 기록해요',
@@ -23,7 +25,7 @@ export const ko = {
   },
   nav: {
     home: '홈',
-    log: '기록',
+    log: '오늘',
     calendar: '캘린더',
     insights: '인사이트',
     settings: '설정',
@@ -52,21 +54,22 @@ export const ko = {
     daysToday: '오늘 즈음',
     startPeriodButton: '생리 시작 기록',
     startPeriodPrompt: '언제 시작했나요?',
-    startChoiceToday: '오늘',
-    startChoiceYesterday: '어제',
-    startChoice2DaysAgo: '그저께',
+    startPeriodSave: '저장',
+    setupDone: '저장',
+    setupRemove: '삭제',
     cancel: '취소',
-    savedToast: '오늘 기록을 저장했어요',
+    savedToast: '저장했어요',
     todayLabel: '오늘',
     dDayPrefix: 'D-',
+    dDaySuffix: '',
     dDayNone: '예측 준비 중',
     weekdays: { sun: '일', mon: '월', tue: '화', wed: '수', thu: '목', fri: '금', sat: '토' },
     phaseAdvice: {
-      menstrual: '몸이 힘들 수 있어요. 편안하게 보내세요',
-      follicular: '에너지가 차오르는 시기예요',
-      ovulation: '활동성이 좋은 시기예요',
-      luteal: '피곤할 수 있는 날이니 휴식을 추천해요',
-      unknown: '오늘도 평안하게 보내세요',
+      menstrual: '오늘은 조금 더 쉬는 게 좋을 수 있어요',
+      follicular: '에너지가 조금씩 올라오는 시기예요',
+      ovulation: '평소보다 활기찬 하루가 될 수 있어요',
+      luteal: '오늘은 피곤할 수 있어요. 천천히 가도 괜찮아요',
+      unknown: '오늘은 쉬엄쉬엄 보내세요',
     },
     changePhoto: '사진 변경',
     resetPhoto: '기본 사진으로',
@@ -74,8 +77,106 @@ export const ko = {
     cropZoomLabel: '확대',
     cropConfirm: '저장',
     cropCancel: '취소',
-    addOverlay: '이미지 추가',
-    removeOverlay: '이미지 제거',
+    todaySuffix: '오늘',
+    phaseShortLabel: {
+      menstrual: '생리 중',
+      follicular: '회복기',
+      ovulation: '배란기',
+      luteal: '황체기',
+      unknown: '준비 중',
+    },
+    quote: {
+      line1: '즐기며 보내는 시간은',
+      line2: '낭비가 아니에요.',
+      author: '존 레논',
+    },
+    keywordsTitle: '오늘의 키워드는',
+    activitiesTitle: '이런 활동 어때요?',
+    activitiesDraftNote: '시기에 맞는 활동 추천 카드는 곧 준비될 예정이에요',
+    activities: {
+      menstrual: {
+        category: '셀프 케어',
+        items: [
+          '따뜻한 차 한 잔',
+          '가벼운 스트레칭',
+          '핫팩으로 배 따뜻하게',
+          '좋아하는 음악 듣기',
+          '일찍 잠자리에 들기',
+        ],
+      },
+      follicular: {
+        category: '새 시도',
+        items: [
+          '새 책 시작하기',
+          '햇볕 쬐며 산책',
+          '가벼운 운동 추가',
+          '학습 콘텐츠 보기',
+          '친구에게 안부 묻기',
+        ],
+      },
+      ovulation: {
+        category: '활동적인 시간',
+        items: [
+          '친구 만남',
+          '새 프로젝트 시작',
+          '발표·미팅 잡기',
+          '그룹 운동',
+          '외출 계획 세우기',
+        ],
+      },
+      luteal: {
+        category: '마음 챙기기',
+        items: [
+          '저널링·감정 기록',
+          '혼자 산책',
+          '명상과 호흡',
+          '음악 듣기',
+          '독서',
+          '디지털 디톡스',
+        ],
+      },
+      unknown: {
+        category: '부드러운 루틴',
+        items: [
+          '천천히 호흡하기',
+          '짧은 산책',
+          '따뜻한 차',
+          '좋아하는 노래 듣기',
+        ],
+      },
+    },
+    keywords: {
+      menstrual: [
+        { subtitle: '무리보다', main: '휴식', emoji: '🛌' },
+        { subtitle: '새 시작보다', main: '마무리', emoji: '✨' },
+        { subtitle: '외출보다', main: '집순이', emoji: '🏠' },
+        { subtitle: '자극보다', main: '따뜻함', emoji: '☕' },
+      ],
+      follicular: [
+        { subtitle: '망설임보다', main: '시작', emoji: '🌱' },
+        { subtitle: '미루기보다', main: '시도', emoji: '💡' },
+        { subtitle: '정체보다', main: '도전', emoji: '🚀' },
+        { subtitle: '혼자보다', main: '사람', emoji: '🤝' },
+      ],
+      ovulation: [
+        { subtitle: '혼자보다', main: '만남', emoji: '👥' },
+        { subtitle: '미루기보다', main: '실행', emoji: '🎯' },
+        { subtitle: '망설임보다', main: '발표', emoji: '🎤' },
+        { subtitle: '안주보다', main: '모험', emoji: '🌟' },
+      ],
+      luteal: [
+        { subtitle: '시작보다', main: '정리', emoji: '🧺' },
+        { subtitle: '도전보다', main: '유지', emoji: '🕯️' },
+        { subtitle: '성취보다', main: '안정', emoji: '🍵' },
+        { subtitle: '외부보다', main: '내부', emoji: '🧘🏾‍♀️' },
+      ],
+      unknown: [
+        { subtitle: '채우기보다', main: '비우기', emoji: '🍃' },
+        { subtitle: '결정보다', main: '관찰', emoji: '👀' },
+        { subtitle: '서두르기보다', main: '천천히', emoji: '🐢' },
+        { subtitle: '소란보다', main: '호흡', emoji: '🌿' },
+      ],
+    },
   },
   log: {
     title: '오늘의 컨디션',
@@ -145,8 +246,8 @@ export const ko = {
     confidence: {
       low: '데이터 적음',
       medium: '참고용',
-      high: '안정적',
-      unknown: '추정 어려움',
+      high: '꾸준해요',
+      unknown: '데이터 부족',
     },
     listTitle: '내 패턴 인사이트',
     listSubtitle: '쌓인 기록을 바탕으로 한 참고용 관찰이에요',
@@ -179,7 +280,7 @@ export const ko = {
     cycleLength: '평균 생리 주기',
     cycleLengthHint: '바뀐 값은 다음 예측부터 반영돼요',
     notifications: '알림',
-    notificationsHint: '곧 준비될 예정이에요 (실제 알림은 아직 동작하지 않아요)',
+    notificationsHint: '알림 기능은 곧 준비될 예정이에요',
     notificationsOn: '켜짐',
     notificationsOff: '꺼짐',
     dataReset: '내 데이터 초기화',
@@ -208,5 +309,3 @@ export const ko = {
     skin: { clear: '깨끗', oily: '유분', dry: '건조', breakout: '트러블' },
   },
 };
-
-export type Dictionary = typeof ko;
