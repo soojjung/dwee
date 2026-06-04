@@ -13,5 +13,5 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
   averagePeriodLength: 5,
   notificationsEnabled: false,
   onboardingCompleted: false,
-  locale: 'ko',
+  locale: 'en',
 };

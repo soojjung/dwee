@@ -56,19 +56,6 @@ create table public.home_hero (
   updated_at timestamptz not null default now()
 );
 
--- =============== home_overlays (1:N per user) ===============
-create table public.home_overlays (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  storage_path text not null,
-  position_x real not null default 0.5 check (position_x between 0 and 1),
-  position_y real not null default 0.5 check (position_y between 0 and 1),
-  order_index smallint not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-create index home_overlays_user_order_idx on public.home_overlays (user_id, order_index);
-
 -- =============== updated_at 자동 갱신 ===============
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
@@ -81,7 +68,6 @@ create trigger trg_profiles_touch       before update on public.profiles       f
 create trigger trg_period_logs_touch    before update on public.period_logs    for each row execute function public.touch_updated_at();
 create trigger trg_condition_logs_touch before update on public.condition_logs for each row execute function public.touch_updated_at();
 create trigger trg_home_hero_touch      before update on public.home_hero      for each row execute function public.touch_updated_at();
-create trigger trg_home_overlays_touch  before update on public.home_overlays  for each row execute function public.touch_updated_at();
 
 -- =============== 신규 가입 시 profile 자동 생성 ===============
 create or replace function public.handle_new_user()
@@ -100,13 +86,11 @@ alter table public.profiles       enable row level security;
 alter table public.period_logs    enable row level security;
 alter table public.condition_logs enable row level security;
 alter table public.home_hero      enable row level security;
-alter table public.home_overlays  enable row level security;
 
 create policy profiles_owner       on public.profiles       for all using (id = auth.uid())       with check (id = auth.uid());
 create policy period_logs_owner    on public.period_logs    for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 create policy condition_logs_owner on public.condition_logs for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 create policy home_hero_owner      on public.home_hero      for all using (user_id = auth.uid()) with check (user_id = auth.uid());
-create policy home_overlays_owner  on public.home_overlays  for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 -- =============== Storage bucket: media (private) ===============
 -- Supabase 콘솔에서 'media' 버킷을 private로 먼저 만든 뒤, 아래 정책 적용.
@@ -126,4 +110,3 @@ create policy media_owner_delete on storage.objects for delete
 -- 다기기 라이브 동기화가 필요해진 시점에 추가
 -- alter publication supabase_realtime add table public.period_logs;
 -- alter publication supabase_realtime add table public.condition_logs;
--- alter publication supabase_realtime add table public.home_overlays;

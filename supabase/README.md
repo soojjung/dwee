@@ -7,7 +7,7 @@
 ```
 supabase/
   migrations/
-    0001_init.sql           — 초기 스키마 (profiles, period_logs, condition_logs, home_hero, home_overlays + RLS + 트리거)
+    0001_init.sql           — 초기 스키마 (profiles, period_logs, condition_logs, home_hero + RLS + 트리거)
   adapters/
     client.ts                       — supabase-js 클라이언트 + requireUserId()
     SupabaseSettingsAdapter.ts      — SettingsRepository 구현
@@ -60,8 +60,7 @@ supabase db push
 - **클라이언트 UUID 유지** — `crypto.randomUUID()` 그대로. 오프라인 row도 충돌 없이 sync.
 - **`updated_at` 트리거** — 모든 mutation 마다 자동 갱신. 다기기 충돌 시 last-write-wins 기준 컬럼.
 - **`(user_id, start_date)` / `(user_id, date)` unique** — 같은 날 다기기 동시 입력 시 한쪽 INSERT 실패 → adapter 에서 항상 `upsert` 로 처리.
-- **Storage 경로 규약** — `{user_id}/home_hero/current.{ext}` , `{user_id}/overlays/{id}.{ext}`. RLS 가 첫 폴더 segment(= user_id) 로 격리.
-- **메타데이터 ↔ 파일 분리** — 좌표/순서는 DB, blob 은 Storage. 좌표만 바꿀 때 파일 재업로드 불필요.
+- **Storage 경로 규약** — `{user_id}/home_hero/current.{ext}`. RLS 가 첫 폴더 segment(= user_id) 로 격리.
 
 ## 충돌·동기화 시 주의
 
