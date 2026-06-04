@@ -160,6 +160,13 @@ SHA=$(git rev-parse --short HEAD)
 OWNER_REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
 ```
 
+⚠️ **중요 — Bash 호출 분리되면 변수 사라짐.** Claude Code 의 Bash tool 은 호출마다 독립 셸 세션이라 `SHA` 같은 변수는 다음 호출까지 살아남지 않음. 두 가지 안전 패턴:
+
+1. **SHA 캡처 + PR 생성을 한 Bash 호출 안에서**: `SHA=$(git rev-parse --short HEAD) && gh pr create --body "..."` 로 묶어서 실행. HEREDOC 안의 `$SHA` 가 정상 expand 됨 (`<<EOF` 사용, `<<'EOF'` 아님).
+2. **PR body 작성 시 SHA 를 리터럴로 박기**: 캡처한 SHA 문자열을 직접 본문에 박아넣고 `<<'EOF'` (literal heredoc) 으로 안전하게 작성. 변수 미해결로 인한 `blob//<path>` 404 사고를 원천 차단.
+
+둘 중 어느 쪽이든 가능하지만 (2) 가 디버깅 친화적 (PR body 가 SHA 와 함께 그대로 보임).
+
 **PR body 구성 전 문서 변경 추출** (PR body 에 포함시킬 데이터):
 
 ```bash
