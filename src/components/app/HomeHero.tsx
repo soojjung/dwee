@@ -1,17 +1,10 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import Link from 'next/link';
 import { useT } from '@/i18n/useT';
 import { useMediaStore } from '@/store/mediaStore';
-import { CropDialog } from './CropDialog';
-import { HomeQuote } from './HomeQuote';
-
-const DEFAULT_HERO = '/brand/home-hero.png';
-
-interface Pending {
-  src: string;
-  naturalWidth: number;
-  naturalHeight: number;
-}
+import { PhotoLayout } from '@/components/home-customize/PhotoLayout';
+import { HomeHeroText } from './HomeHeroText';
 
 interface HomeHeroProps {
   isEmpty?: boolean;
@@ -19,45 +12,23 @@ interface HomeHeroProps {
 
 export function HomeHero({ isEmpty = false }: HomeHeroProps) {
   const t = useT();
-  const fileHeroRef = useRef<HTMLInputElement | null>(null);
 
-  const homeHeroUrl = useMediaStore((s) => s.homeHeroUrl);
+  const photoCount = useMediaStore((s) => s.photoCount);
+  const photoUrls = useMediaStore((s) => s.photoUrls);
+  const mainText = useMediaStore((s) => s.mainText);
+  const subText = useMediaStore((s) => s.subText);
   const hydrated = useMediaStore((s) => s.hydrated);
   const hydrate = useMediaStore((s) => s.hydrate);
-  const setHomeHero = useMediaStore((s) => s.setHomeHero);
-  const clearHomeHero = useMediaStore((s) => s.clearHomeHero);
-
-  const [pending, setPending] = useState<Pending | null>(null);
+  const hasUserText = mainText.trim() !== '' || subText.trim() !== '';
 
   useEffect(() => {
     if (!hydrated) hydrate();
   }, [hydrated, hydrate]);
 
-  useEffect(() => {
-    return () => {
-      if (pending) URL.revokeObjectURL(pending.src);
-    };
-  }, [pending]);
-
-  const src = homeHeroUrl ?? DEFAULT_HERO;
-  const isCustom = !!homeHeroUrl;
-
-  async function handleHeroPick(file: File) {
-    const url = URL.createObjectURL(file);
-    const { width, height } = await readImageSize(url);
-    setPending({ src: url, naturalWidth: width, naturalHeight: height });
-  }
-
-  async function handleCropConfirm(blob: Blob) {
-    await setHomeHero(blob);
-    if (pending) URL.revokeObjectURL(pending.src);
-    setPending(null);
-  }
-
-  function handleCropCancel() {
-    if (pending) URL.revokeObjectURL(pending.src);
-    setPending(null);
-  }
+  const activePhotos = photoCount
+    ? photoUrls.slice(0, photoCount).filter((u): u is string => !!u)
+    : [];
+  const isCustom = photoCount !== null && activePhotos.length === photoCount;
 
   return (
     <>
@@ -70,23 +41,22 @@ export function HomeHero({ isEmpty = false }: HomeHeroProps) {
             height={16}
             className="h-4 w-auto"
           />
-          <button
-            type="button"
-            aria-label={t.home.changePhoto}
-            onClick={() => fileHeroRef.current?.click()}
+          <Link
+            href="/home/customize"
+            aria-label={t.home.customize.title}
             className="flex h-6 w-6 items-center justify-center text-brand-gray900 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gray900 focus-visible:ring-offset-2"
           >
             <EditStarIcon />
-          </button>
+          </Link>
         </div>
       </div>
 
-      <div className="relative -mx-4 aspect-square overflow-hidden">
-        <img src={src} alt="" aria-hidden className="h-full w-full object-cover" />
+      <div className="relative -mx-4 aspect-square overflow-hidden bg-brand-gray300">
+        {isCustom ? <PhotoLayout count={photoCount} urls={activePhotos} /> : null}
 
-        {!isEmpty ? <HomeQuote /> : null}
+        <HomeHeroText />
 
-        {isEmpty ? (
+        {isEmpty && !isCustom && !hasUserText ? (
           <div
             className="pointer-events-none absolute right-4 top-4 z-10 flex flex-col items-end gap-1.5"
             aria-hidden
@@ -102,51 +72,9 @@ export function HomeHero({ isEmpty = false }: HomeHeroProps) {
             </span>
           </div>
         ) : null}
-
-        {isCustom ? (
-          <button
-            type="button"
-            aria-label={t.home.resetPhoto}
-            onClick={() => clearHomeHero()}
-            className="absolute right-3 top-3 z-10 h-8 rounded-full bg-brand-gray900/75 px-3 text-xs font-medium text-brand-white backdrop-blur-sm transition-colors hover:bg-brand-gray900/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-white focus-visible:ring-offset-1"
-          >
-            {t.home.resetPhoto}
-          </button>
-        ) : null}
-
-        <input
-          ref={fileHeroRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleHeroPick(file);
-            e.target.value = '';
-          }}
-        />
       </div>
-
-      {pending ? (
-        <CropDialog
-          src={pending.src}
-          naturalWidth={pending.naturalWidth}
-          naturalHeight={pending.naturalHeight}
-          onConfirm={handleCropConfirm}
-          onCancel={handleCropCancel}
-        />
-      ) : null}
     </>
   );
-}
-
-function readImageSize(src: string): Promise<{ width: number; height: number }> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
-    img.onerror = reject;
-    img.src = src;
-  });
 }
 
 function EditStarIcon() {

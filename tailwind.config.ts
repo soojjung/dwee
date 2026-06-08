@@ -34,6 +34,7 @@ const config: Config = {
           pink200: '#F689BC',
           pink800: '#AE0063',
           pink900: '#87005A',
+          gray50: '#FFFDFE',
           gray200: '#F5F3F4',
           gray300: '#F0EEEF',
           gray400: '#D5D3D4',

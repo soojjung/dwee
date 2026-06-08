@@ -173,30 +173,35 @@ pnpm cap:ios      # Xcode 열기
 ```
 src/
 ├── app/                          Next.js App Router
-│   ├── (auth)/                   로그인 / 온보딩
-│   │   ├── login/                v1 (+ v2, v3 시안)
+│   ├── (auth)/                   로그인 / 온보딩 (풀스크린, 탭바 없음)
+│   │   ├── login/
 │   │   └── onboarding/
-│   └── (app)/                    인증 후 메인
-│       ├── page.tsx              홈 (다음 예상일)
-│       ├── log/                  오늘의 컨디션 기록
-│       ├── calendar/             캘린더
-│       ├── insights/             rule-based 인사이트
-│       └── settings/             설정 (언어 등)
+│   ├── (app)/                    인증 후 메인 (AppShell + BottomTabNav)
+│   │   ├── page.tsx              홈
+│   │   ├── log/                  오늘의 컨디션 기록
+│   │   ├── calendar/             캘린더
+│   │   ├── insights/             rule-based 인사이트
+│   │   └── settings/             설정 (언어 등)
+│   └── (fullscreen)/             몰입형 편집 화면 (풀스크린, 탭바 없음)
+│       └── home/customize/       홈 커스터마이즈 + 사진 편집
 │
 ├── components/
-│   ├── app/                      AppShell, BottomTabNav, HomeScreen, 키워드/액티비티 카드 등
+│   ├── app/                      AppShell, BottomTabNav, HomeScreen, HomeHero, 카드 등
+│   ├── home-customize/           HomeCustomizeScreen, PhotoLayout, TextSettingsSection 등
 │   ├── auth/                     LoginScreen
 │   └── ui/                       Button, Toast, ChoiceGroup, PageContainer
 │
 ├── store/                        Zustand: period / condition / settings / media / auth
 │
 ├── data/                         어댑터 패턴
-│   ├── repositories/             인터페이스 (콘센트 모양)
-│   ├── adapters/indexeddb/       로컬 구현 (idb-keyval)
-│   ├── adapters/supabase/        원격 구현 (Supabase JS)
-│   └── index.ts                  단일 진입점 (현재 IndexedDB wiring, Supabase 어댑터는 MVP2.2 부터 wiring)
+│   ├── repositories/             인터페이스 (Period / Condition / Settings / Media)
+│   ├── adapters/indexeddb/       로컬 구현 (idb-keyval, schema v4, 현재 wiring)
+│   ├── adapters/supabase/        원격 구현 (Supabase JS, MVP2.2 부터 wiring)
+│   └── index.ts                  단일 진입점
 │
-├── domain/cycle/                 순수 함수: aggregate, predictor, phase
+├── domain/
+│   ├── cycle/                    순수 함수: aggregate, predictor, phase
+│   └── home/                     decor 타입·상수 (PhotoCount, TextPosition 등)
 ├── lib/
 │   ├── date/                     날짜 유틸
 │   ├── insight/                  rule-based 인사이트 생성

@@ -28,40 +28,39 @@ src/data/
 ├── repositories/                   ← 콘센트 모양 (인터페이스)
 │   ├── PeriodRepository.ts         : list(), add(), update(), remove()
 │   ├── ConditionRepository.ts      : getByDate(), upsert(), range()
-│   └── SettingsRepository.ts       : get(), update()
+│   ├── SettingsRepository.ts       : get(), update()
+│   └── MediaRepository.ts          : getPhotoCount/setPhotoCount, getHomePhoto/setHomePhoto/clearHomePhoto (slot×4),
+│                                     getTextPosition/setTextPosition, getMainText/setMainText,
+│                                     getSubText/setSubText, getTextOrder/setTextOrder
 │
 └── adapters/                       ← 플러그 (실제 구현)
-    └── indexeddb/                  ← IndexedDB로 구현한 어댑터들
-        ├── IndexedDBPeriodAdapter.ts
-        ├── IndexedDBConditionAdapter.ts
-        ├── IndexedDBSettingsAdapter.ts
-        ├── keys.ts
-        └── migrations.ts
+    ├── indexeddb/                  ← IndexedDB로 구현한 어댑터들 (현재 wiring)
+    │   ├── IndexedDBPeriodAdapter.ts
+    │   ├── IndexedDBConditionAdapter.ts
+    │   ├── IndexedDBSettingsAdapter.ts
+    │   ├── IndexedDBMediaAdapter.ts
+    │   ├── keys.ts                 ← STORAGE_KEYS / DEPRECATED_KEYS / CURRENT_SCHEMA_VERSION (현재 v4)
+    │   └── migrations.ts           ← v1→v4 순차 실행 (v3: home_hero blob → slot 0 이주)
+    └── supabase/                   ← Supabase로 구현한 어댑터들 (MVP2.2 wiring 예정)
+        ├── client.ts
+        ├── SupabasePeriodAdapter.ts
+        ├── SupabaseConditionAdapter.ts
+        ├── SupabaseSettingsAdapter.ts
+        └── SupabaseMediaAdapter.ts  ← home_photos(slot별) + home_decor_settings 테이블 사용.
+                                        textOrder 컬럼 미존재 → no-op (TODO)
 ```
 
-`indexeddb/` 폴더가 분리되어 있는 것은,
-**다른 기술로 구현한 폴더가 옆에 생길 자리를 미리 비워둔 것**입니다.
+`indexeddb/`와 `supabase/` 폴더가 나란히 있어 **기술 교체는 `data/index.ts` 한 파일만 수정**하면 됩니다.
 
-### 1.3 미래 확장: Supabase 도입 시
+### 1.3 어댑터 교체 — 이미 두 구현체 존재
 
-MVP2에서 클라우드 동기화가 필요해지면 다음 한 가지만 합니다.
-
-```
-src/data/adapters/
-├── indexeddb/            ← 기존 (로컬 저장)
-└── supabase/             ← 신규 추가 (클라우드 저장)
-    ├── SupabasePeriodAdapter.ts
-    ├── SupabaseConditionAdapter.ts
-    └── SupabaseSettingsAdapter.ts
-```
-
-그리고 `src/data/index.ts`에서 한 줄만 바꿉니다.
+MVP2에서는 `data/index.ts`의 wiring 줄만 바꿉니다.
 
 ```ts
-// 변경 전
+// 변경 전 (현재 — IndexedDB)
 export const periodRepo: PeriodRepository = indexedDBPeriodAdapter;
 
-// 변경 후
+// 변경 후 (Supabase wiring 시)
 export const periodRepo: PeriodRepository = supabasePeriodAdapter;
 ```
 
@@ -188,5 +187,9 @@ import type { PeriodLog } from '@/types';
 - `CLAUDE.md` — "코딩 표준" 섹션의 의존성 방향 규칙
 - `.claude/rules/storage.md` — 저장소 규칙 가드레일
 - `src/data/index.ts` — 단일 진입점
-- `src/data/repositories/*.ts` — Repository 인터페이스
-- `src/data/adapters/indexeddb/*.ts` — 현재 구현
+- `src/data/repositories/*.ts` — Repository 인터페이스 (Period / Condition / Settings / Media)
+- `src/data/adapters/indexeddb/*.ts` — 로컬 구현 (현재 wiring, schema v4)
+- `src/data/adapters/supabase/*.ts` — 원격 구현 (MVP2.2 wiring 예정)
+- `src/domain/home/decor.ts` — PhotoCount / PhotoSlot / TextPosition / TextOrder 타입·상수
+- `src/store/mediaStore.ts` — MediaRepository 소비 store
+- `docs/flows/customize.md` — 홈 커스터마이즈 화면 플로우
