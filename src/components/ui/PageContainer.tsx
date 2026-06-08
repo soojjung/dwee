@@ -8,7 +8,7 @@ interface PageContainerProps {
 
 export function PageContainer({ children, className }: PageContainerProps) {
   return (
-    <section className={cn('mx-auto flex w-full max-w-md flex-col gap-3 px-4', className)}>
+    <section className={cn('mx-auto flex w-full max-w-md flex-col gap-3 overflow-x-clip px-4', className)}>
       {children}
     </section>
   );

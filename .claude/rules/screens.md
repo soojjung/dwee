@@ -10,13 +10,15 @@ paths:
 ## 0) 화면 플로우 다이어그램
 
 - 분기/state machine을 가진 화면은 `docs/flows/<name>.md`에 Mermaid로 기록.
-- 현재 등록: [onboarding](../../docs/flows/onboarding.md), [home](../../docs/flows/home.md), [calendar](../../docs/flows/calendar.md)
+- 현재 등록: [onboarding](../../docs/flows/onboarding.md), [home](../../docs/flows/home.md), [calendar](../../docs/flows/calendar.md), [customize](../../docs/flows/customize.md)
 
 ## 1) 라우트 그룹
 
 - `(auth)` — 풀스크린, BottomTabNav 없음. 로그인/온보딩 등 진입 동선 전용.
 - `(app)` — `<AppShell>` 자동 래핑. BottomTabNav 항상 표시.
-- 새 화면 추가 시 둘 중 어디에 둘지 먼저 결정.
+- `(fullscreen)` — 풀스크린, BottomTabNav 없음. AppShell 밖의 몰입형 편집 화면 전용.  
+  현재 포함: `/home/customize`, `/home/customize/edit-photos`.
+- 새 화면 추가 시 셋 중 어디에 둘지 먼저 결정.
 
 ## 2) i18n
 

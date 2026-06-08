@@ -21,7 +21,9 @@ flowchart TD
 
 ### isEmpty 분기 상세
 
-- **HomeHero**: `isEmpty=true` → dwee 로고 + 별 아이콘 + `editHint` 가이드 문구 표시
+- **HomeHero**: `isEmpty && !isCustom && !hasUserText` 조건이 모두 참일 때만 `editHint` 가이드 문구 표시.  
+  `isCustom` = photoCount 슬롯이 전부 채워진 경우, `hasUserText` = mainText 또는 subText 가 비어있지 않은 경우.  
+  배경은 기본 `bg-brand-gray300`. 사진이 있으면 `PhotoLayout`(1/2/4 그리드), 텍스트가 있으면 `HomeHeroText` 오버레이 표시.
 - **WeekStrip**: 예측 데이터 없이 오늘 날짜 원만 표시 (pink50 배경, pink800 텍스트)
 - **PhaseAdvicePill**: 숨김 → `EmptyHintCard`(+ 캘린더 FAB 안내) 로 대체
 - **Keywords / Activities / Foods**: 각 섹션에 `EmptyHintCard` placeholder 삽입
@@ -41,16 +43,17 @@ flowchart LR
     PS --> GI["generateInsights()"]
     CS["conditionStore.byDate"] --> GI
     SS --> GI
+    MS["mediaStore\n(photoCount/urls/text)"] -->|"decor"| Hero
 
-    CP -->|"PhaseEstimate"| Hero["HomeHero / PhaseAdvicePill"]
-    CP -->|"phase"| Cards["Keywords · Activities · Foods"]
+    CP -->|"PhaseEstimate"| Hero["HomeHero\n+ HomeHeroText\n+ PhotoLayout"]
+    CP -->|"phase"| Cards["PhaseAdvicePill\nKeywords · Activities · Foods"]
     PNP -->|"CyclePrediction"| Strip["WeekStrip"]
     GI -->|"Insight[]"| IC["InsightCard 반복"]
 
     classDef store fill:#F0E8FD,stroke:#BDA8E5,color:#4A3A5C;
     classDef logic fill:#E8F0FD,stroke:#A8BDE5,color:#3A4A5C;
     classDef ui fill:#FDE8EF,stroke:#E5A8BD,color:#5C3A4A;
-    class PS,SS,CS store;
+    class PS,SS,CS,MS store;
     class CP,PNP,GI logic;
     class Hero,Cards,Strip,IC ui;
 ```

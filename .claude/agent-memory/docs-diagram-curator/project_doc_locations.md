@@ -7,9 +7,20 @@ type: project
 ## Key doc locations
 
 - `docs/flows/home.md` — home screen state machine + data flow. Must be updated when HomeScreen.tsx flow changes.
-- `docs/architecture/data-layer.md` — dependency direction diagram.
+- `docs/flows/customize.md` — fullscreen customize flow (HomeCustomize + PhotoEdit). New as of PR #8.
+- `docs/architecture/data-layer.md` — dependency direction + repository inventory. Must be updated when any new Repository interface is added.
 - `docs/product/mvp1-spec.md` — original product spec with persona, KPI, condition enums.
 - `.claude/rules/health-copy.md` — copy tone rules (diet/medical copy restrictions).
+- `.claude/rules/screens.md` — route group registry. Must be updated when a new `(group)` layout is added under `src/app/`.
+- `supabase/README.md` — Supabase migration + adapter guide. Adapter code lives at `src/data/adapters/supabase/` (already moved from `supabase/adapters/`).
+
+## Active repositories (as of schema v4)
+
+Period / Condition / Settings / Media. Each has both IndexedDB and Supabase adapter implementations. `data/index.ts` currently wires IndexedDB; Supabase wiring is MVP2.2.
+
+## Route groups (fullscreen added)
+
+Three route groups now exist: `(auth)`, `(app)`, `(fullscreen)`. The `(fullscreen)` group hosts immersive editing screens with no AppShell or BottomTabNav. Currently: `/home/customize`, `/home/customize/edit-photos`.
 
 ## Sync rule: CLAUDE.md "명시적 제외" changes must propagate to three places
 
