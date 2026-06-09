@@ -259,12 +259,14 @@ EOF
 
 ## STEP 8 — Figma 스냅샷 동기화 (dwee 전용)
 
-`tests/snapshots/ko/*.png` 가 이 PR 에서 변경됐으면 Figma "Snapshots (ko)" 페이지의 frame 들을 자동 갱신. 변경 없으면 skip.
+`tests/snapshots/ko/home-*.png` 가 이 PR 에서 변경됐으면 Figma "Snapshots (ko)" 페이지의 frame 들을 자동 갱신. 변경 없으면 skip.
+
+> **스코프**: `home-*.png` 만 동기화 대상. `customize-*.png` / `log-*.png` / `photo-edit-*.png` 는 e2e 시각 회귀 전용 baseline 이며 Figma 에 업로드하지 않는다.
 
 ### 트리거 확인
 
 ```bash
-git diff --name-only origin/main...HEAD -- 'tests/snapshots/ko/*.png'
+git diff --name-only origin/main...HEAD -- 'tests/snapshots/ko/home-*.png'
 ```
 
 출력이 비어있으면 이 STEP 통째로 스킵하고 STEP 9 진행. 출력이 있으면 그 파일들만 sync.

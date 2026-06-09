@@ -94,6 +94,15 @@ _**D**aily **W**ellness for **E**very**E**ssence._
 
 브랜치 정리 → 검증 게이트 (`lint → typecheck → test:unit → test:e2e`) → 단위 테스트 보강 → 문서 갱신 → PR 생성 → Figma 동기화 → 결과 보고. 상세 절차는 [`.claude/commands/commit.md`](./.claude/commands/commit.md) 참조.
 
+`test:e2e` 는 5개 phase × 2개 locale(en/ko) 매트릭스로 시각 스냅샷을 찍습니다. 현재 커버리지:
+
+| spec | 화면 | 비고 |
+|------|------|------|
+| `tests/home.spec.ts` | 홈 | Figma "Snapshots (ko)" 자동 동기화 대상 |
+| `tests/customize.spec.ts` | 홈 커스터마이즈 | e2e baseline 전용 |
+| `tests/log.spec.ts` | 생리 기록(/log) | e2e baseline 전용 |
+| `tests/photo-edit.spec.ts` | 사진 편집 | **skipped** — Playwright WebKit이 IndexedDB에 Blob을 저장할 때 null DOMException을 던지는 Playwright-only 버그. 실제 Safari/WKWebView·Chromium은 정상 동작. |
+
 ```mermaid
 flowchart LR
     S0([STEP 0\n변경 확인])

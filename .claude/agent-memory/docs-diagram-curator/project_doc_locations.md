@@ -24,6 +24,10 @@ Period / Condition / Settings / Media. Each has both IndexedDB and Supabase adap
 
 Three route groups now exist: `(auth)`, `(app)`, `(fullscreen)`. The `(fullscreen)` group hosts immersive editing screens with no AppShell or BottomTabNav. Currently: `/home/customize`, `/home/customize/edit-photos`.
 
+## Figma sync scope: home snapshots only
+
+STEP 8 in `.claude/commands/commit.md` syncs only `tests/snapshots/ko/home-*.png` to Figma "Snapshots (ko)". The trigger glob is intentionally `home-*.png`, not `*.png`. `customize-*.png`, `log-*.png`, and `photo-edit-*.png` are e2e-only baselines and must NOT be pushed to Figma. If new screen specs are added to `tests/`, the Figma sync block should not be widened unless a dedicated Figma page is created for that screen.
+
 ## Sync rule: CLAUDE.md "명시적 제외" changes must propagate to three places
 
 When the exclusion list in CLAUDE.md changes:
