@@ -18,7 +18,7 @@ export const ko: Dictionary = {
     },
   },
   placeholder: {
-    log: '오늘의 컨디션 기록은 곧 준비될 예정이에요',
+    log: '오늘 기록은 곧 준비될 예정이에요',
     calendar: '캘린더 화면은 곧 준비될 예정이에요',
     magazine: '매거진은 곧 준비될 예정이에요',
     onboarding: '시작 안내는 곧 준비될 예정이에요',
@@ -313,7 +313,7 @@ export const ko: Dictionary = {
     addEntryFabAriaLabel: '기록 추가',
     periodSectionLabel: '생리 기간',
     conditionSectionLabel: '오늘 컨디션 (선택)',
-    title: '오늘의 컨디션',
+    title: '오늘 기록',
     todayMood: '오늘의 기분',
     todayEnergy: '에너지',
     todayPain: '통증 정도',
