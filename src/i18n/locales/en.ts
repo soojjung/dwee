@@ -104,15 +104,15 @@ export const en = {
     },
     editHint: {
       cta: 'Tap above ↑',
-      line1: 'Add your photo &',
-      line2: 'your own words here!',
+      line1: 'Add your photo',
+      line2: 'and your own words!',
     },
     autoText: {
       menstrual: { main: 'Your body is doing a lot right now', sub: 'Rest is part of it' },
       follicular: { main: 'Something’s shifting — in a good way', sub: 'Take the moment' },
       ovulation: { main: 'You might feel more like yourself today', sub: 'Lean into it' },
       luteal: { main: 'It’s okay to take your own pace', sub: 'No rush today' },
-      unknown: { main: 'Today is yours to shape however you need', sub: 'Go easy on yourself' },
+      unknown: { main: 'However today goes, you’re okay', sub: 'Go easy on yourself' },
     },
     customize: {
       title: 'Customize home',
@@ -130,7 +130,7 @@ export const en = {
       },
       text: {
         title: 'Text',
-        hint: 'Leave it empty and we’ll match the words to your cycle.',
+        hint: 'Leave it blank and we’ll pick words that match your cycle.',
         position: {
           bottomLeft: 'Bottom left',
           topLeft: 'Top left',
@@ -284,13 +284,13 @@ export const en = {
       luteal: [
         { subtitle: 'Instead of starting', main: 'Organize', emoji: '🧺' },
         { subtitle: 'Instead of striving', main: 'Maintain', emoji: '🕯️' },
-        { subtitle: 'Instead of achieving', main: 'Steady', emoji: '🍵' },
+        { subtitle: 'Instead of achieving', main: 'Hold steady', emoji: '🍵' },
         { subtitle: 'Instead of going out', main: 'Stay in', emoji: '🧘🏾‍♀️' },
       ],
       unknown: [
         { subtitle: 'Instead of filling', main: 'Let it be', emoji: '🍃' },
         { subtitle: 'Instead of deciding', main: 'Observe', emoji: '👀' },
-        { subtitle: 'Instead of rushing', main: 'Slow', emoji: '🐢' },
+        { subtitle: 'Instead of rushing', main: 'Slow down', emoji: '🐢' },
         { subtitle: 'Instead of noise', main: 'Breathe', emoji: '🌿' },
       ],
     },

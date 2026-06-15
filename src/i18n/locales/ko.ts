@@ -131,7 +131,7 @@ export const ko: Dictionary = {
       },
       text: {
         title: '문구 설정',
-        hint: '문구 미 입력 시, 월경 주기에 어울리는 문구로 자동 업데이트돼요.',
+        hint: '비워두면 주기에 어울리는 문구로 자동 채워드려요.',
         position: {
           bottomLeft: '왼쪽 하단',
           topLeft: '왼쪽 상단',
