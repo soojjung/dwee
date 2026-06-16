@@ -1,27 +1,19 @@
 'use client';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useT } from '@/i18n/useT';
 import { Button } from '@/components/ui/Button';
 import { Toast } from '@/components/ui/Toast';
-import { useAuthStore } from '@/store/authStore';
-import { useSettingsStore } from '@/store/settingsStore';
-import { usePeriodStore } from '@/store/periodStore';
-import { useConditionStore } from '@/store/conditionStore';
-import { migrateLocalToRemote } from '@/data/migration/anonToRemote';
-import { EmailSignInForm } from './EmailSignInForm';
-
-const NOTICE_DURATION_MS = 2400;
+import { useAuthStore, type OAuthProvider } from '@/store/authStore';
 
 export function LoginScreen() {
   const t = useT();
-  const router = useRouter();
   const [notice, setNotice] = useState<string | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const authHydrate = useAuthStore((s) => s.hydrate);
   const authHydrated = useAuthStore((s) => s.hydrated);
   const authError = useAuthStore((s) => s.error);
+  const loading = useAuthStore((s) => s.loading);
+  const signInWithOAuth = useAuthStore((s) => s.signInWithOAuth);
 
   // (auth) 라우트 그룹은 AppShell이 없어 hydrate가 안 됨 — 여기서 직접 트리거.
   // 사용자가 화면을 보는 동안 백그라운드에서 익명 세션을 미리 만들어둠.
@@ -36,53 +28,12 @@ export function LoginScreen() {
       missingConfig: e.missingConfig,
       networkOffline: e.networkOffline,
       anonFailed: e.anonFailed,
-      invalidCredentials: e.invalidCredentials,
-      emailInUse: e.emailInUse,
-      weakPassword: e.weakPassword,
-      invalidEmail: e.invalidEmail,
+      oauthFailed: e.oauthFailed,
     };
     setNotice(messageMap[authError]);
   }, [authError, t]);
 
-  async function handleEmailSuccess(mode: 'signin' | 'signup') {
-    // Push local (IndexedDB) data to Supabase, then re-read the
-    // remote source. Failure here doesn't block sign-in — surfaces
-    // in console for now; STEP 2.3.1 can add a retry/queue.
-    try {
-      const result = await migrateLocalToRemote();
-      if (result.errors.length > 0) {
-        console.warn('[migrate] partial errors', result.errors);
-      }
-      await Promise.all([
-        useSettingsStore.getState().rehydrate(),
-        usePeriodStore.getState().rehydrate(),
-        useConditionStore.getState().rehydrate(),
-      ]);
-    } catch (e) {
-      console.warn('[migrate] failed', e);
-    }
-    if (mode === 'signup') setNotice(t.auth.email.signedUpToast);
-    router.push('/');
-  }
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current !== null) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-
-  const showComingSoon = () => {
-    if (timerRef.current !== null) {
-      clearTimeout(timerRef.current);
-    }
-    setNotice(t.auth.comingSoon);
-    timerRef.current = setTimeout(() => {
-      setNotice(null);
-      timerRef.current = null;
-    }, NOTICE_DURATION_MS);
-  };
+  const handleOAuth = (provider: OAuthProvider) => signInWithOAuth(provider);
 
   return (
     <main className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col bg-auth-bg px-5">
@@ -97,30 +48,20 @@ export function LoginScreen() {
         />
       </div>
 
-      <div className="flex flex-col gap-6 pb-24">
-        <EmailSignInForm onSuccess={handleEmailSuccess} />
+      <div className="flex flex-col gap-3 pb-24">
+        <Button size="lg" fullWidth onClick={() => handleOAuth('apple')} disabled={loading}>
+          <AppleGlyph />
+          <span>{t.auth.signInWithApple}</span>
+        </Button>
 
-        <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-auth-linkMuted">
-          <span className="h-px flex-1 bg-auth-linkMuted/40" />
-          <span>{t.auth.email.orDivider}</span>
-          <span className="h-px flex-1 bg-auth-linkMuted/40" />
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <Button size="lg" fullWidth onClick={showComingSoon}>
-            <AppleGlyph />
-            <span>{t.auth.signInWithApple}</span>
-          </Button>
-
-          <Button size="lg" fullWidth onClick={showComingSoon}>
-            <GoogleGlyph />
-            <span>{t.auth.signInWithGoogle}</span>
-          </Button>
-        </div>
+        <Button size="lg" fullWidth onClick={() => handleOAuth('google')} disabled={loading}>
+          <GoogleGlyph />
+          <span>{t.auth.signInWithGoogle}</span>
+        </Button>
 
         <Link
           href="/"
-          className="self-center rounded-sm px-2 py-1 text-base text-auth-linkMuted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-auth-button focus-visible:ring-offset-2"
+          className="mt-5 self-center rounded-sm px-2 py-1 text-base text-auth-linkMuted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-auth-button focus-visible:ring-offset-2"
         >
           {t.auth.continueWithoutSignIn}
         </Link>
