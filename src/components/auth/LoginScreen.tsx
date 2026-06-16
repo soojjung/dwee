@@ -6,6 +6,10 @@ import { useT } from '@/i18n/useT';
 import { Button } from '@/components/ui/Button';
 import { Toast } from '@/components/ui/Toast';
 import { useAuthStore } from '@/store/authStore';
+import { useSettingsStore } from '@/store/settingsStore';
+import { usePeriodStore } from '@/store/periodStore';
+import { useConditionStore } from '@/store/conditionStore';
+import { migrateLocalToRemote } from '@/data/migration/anonToRemote';
 import { EmailSignInForm } from './EmailSignInForm';
 
 const NOTICE_DURATION_MS = 2400;
@@ -40,7 +44,23 @@ export function LoginScreen() {
     setNotice(messageMap[authError]);
   }, [authError, t]);
 
-  function handleEmailSuccess(mode: 'signin' | 'signup') {
+  async function handleEmailSuccess(mode: 'signin' | 'signup') {
+    // Push local (IndexedDB) data to Supabase, then re-read the
+    // remote source. Failure here doesn't block sign-in — surfaces
+    // in console for now; STEP 2.3.1 can add a retry/queue.
+    try {
+      const result = await migrateLocalToRemote();
+      if (result.errors.length > 0) {
+        console.warn('[migrate] partial errors', result.errors);
+      }
+      await Promise.all([
+        useSettingsStore.getState().rehydrate(),
+        usePeriodStore.getState().rehydrate(),
+        useConditionStore.getState().rehydrate(),
+      ]);
+    } catch (e) {
+      console.warn('[migrate] failed', e);
+    }
     if (mode === 'signup') setNotice(t.auth.email.signedUpToast);
     router.push('/');
   }
