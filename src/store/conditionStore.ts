@@ -10,6 +10,7 @@ interface ConditionState {
   loading: boolean;
   error: string | null;
   hydrateRange: (fromDate: string, toDate: string) => Promise<void>;
+  rehydrate: () => Promise<void>;
   upsert: (input: NewConditionInput) => Promise<DailyConditionLog | null>;
   getByDate: (date: string) => DailyConditionLog | null;
 }
@@ -35,6 +36,12 @@ export const useConditionStore = create<ConditionState>()((set, get) => ({
     } catch (e) {
       set({ error: (e as Error).message, loading: false });
     }
+  },
+
+  async rehydrate() {
+    const range = get().hydratedRange;
+    set({ byDate: {}, hydratedRange: null });
+    if (range) await get().hydrateRange(range.from, range.to);
   },
 
   async upsert(input) {

@@ -11,10 +11,11 @@ interface SettingsState {
   loading: boolean;
   error: string | null;
   hydrate: () => Promise<void>;
+  rehydrate: () => Promise<void>;
   update: (patch: Partial<UserSettings>) => Promise<void>;
 }
 
-export const useSettingsStore = create<SettingsState>()((set) => ({
+export const useSettingsStore = create<SettingsState>()((set, get) => ({
   settings: DEFAULT_USER_SETTINGS,
   hydrated: false,
   loading: false,
@@ -36,6 +37,11 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
     } catch (e) {
       set({ error: (e as Error).message, loading: false });
     }
+  },
+
+  async rehydrate() {
+    set({ hydrated: false });
+    await get().hydrate();
   },
 
   async update(patch) {

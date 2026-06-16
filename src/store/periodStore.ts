@@ -17,6 +17,7 @@ interface PeriodState {
   loading: boolean;
   error: string | null;
   hydrate: () => Promise<void>;
+  rehydrate: () => Promise<void>;
   add: (input: NewPeriodInput) => Promise<PeriodLog | null>;
   /** 직전 기록을 삭제하고 새 입력을 추가한다 (typo 수정 시나리오). */
   replace: (oldId: string, input: NewPeriodInput) => Promise<PeriodLog | null>;
@@ -45,6 +46,11 @@ export const usePeriodStore = create<PeriodState>()((set, get) => ({
     } catch (e) {
       set({ error: (e as Error).message, loading: false });
     }
+  },
+
+  async rehydrate() {
+    set({ hydrated: false });
+    await get().hydrate();
   },
 
   async add(input) {
