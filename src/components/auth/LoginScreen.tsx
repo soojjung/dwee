@@ -1,19 +1,20 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useT } from '@/i18n/useT';
 import { Button } from '@/components/ui/Button';
 import { Toast } from '@/components/ui/Toast';
-import { useAuthStore, type OAuthProvider } from '@/store/authStore';
+import { useAuthStore } from '@/store/authStore';
+
+const NOTICE_DURATION_MS = 2400;
 
 export function LoginScreen() {
   const t = useT();
   const [notice, setNotice] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const authHydrate = useAuthStore((s) => s.hydrate);
   const authHydrated = useAuthStore((s) => s.hydrated);
   const authError = useAuthStore((s) => s.error);
-  const loading = useAuthStore((s) => s.loading);
-  const signInWithOAuth = useAuthStore((s) => s.signInWithOAuth);
 
   // (auth) 라우트 그룹은 AppShell이 없어 hydrate가 안 됨 — 여기서 직접 트리거.
   // 사용자가 화면을 보는 동안 백그라운드에서 익명 세션을 미리 만들어둠.
@@ -33,7 +34,27 @@ export function LoginScreen() {
     setNotice(messageMap[authError]);
   }, [authError, t]);
 
-  const handleOAuth = (provider: OAuthProvider) => signInWithOAuth(provider);
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  // OAuth wiring (authStore.signInWithOAuth + /auth/callback) is in place,
+  // but the user-facing buttons stay on a "Coming soon" toast until the
+  // next STEP wires Supabase Apple/Google providers + external consoles.
+  const showComingSoon = () => {
+    if (timerRef.current !== null) {
+      clearTimeout(timerRef.current);
+    }
+    setNotice(t.auth.comingSoon);
+    timerRef.current = setTimeout(() => {
+      setNotice(null);
+      timerRef.current = null;
+    }, NOTICE_DURATION_MS);
+  };
 
   return (
     <main className="relative mx-auto flex min-h-dvh w-full max-w-md flex-col bg-auth-bg px-5">
@@ -49,12 +70,12 @@ export function LoginScreen() {
       </div>
 
       <div className="flex flex-col gap-3 pb-24">
-        <Button size="lg" fullWidth onClick={() => handleOAuth('apple')} disabled={loading}>
+        <Button size="lg" fullWidth onClick={showComingSoon}>
           <AppleGlyph />
           <span>{t.auth.signInWithApple}</span>
         </Button>
 
-        <Button size="lg" fullWidth onClick={() => handleOAuth('google')} disabled={loading}>
+        <Button size="lg" fullWidth onClick={showComingSoon}>
           <GoogleGlyph />
           <span>{t.auth.signInWithGoogle}</span>
         </Button>
